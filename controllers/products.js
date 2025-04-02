@@ -1,14 +1,9 @@
 const fs = require("node:fs");
 const Product = require("../models/product");
+const Stock = require("../models/stock");
 const cloudinary = require('cloudinary').v2;
 const path = require('path');
 
-// Configurar Cloudinary
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
-});
 
 // Obtener todos los productos con filtros opcionales y paginación
 exports.getProducts = async (req, res) => {
@@ -88,9 +83,8 @@ exports.addProduct = async (req, res) => {
 
     // Subir imagen a Cloudinary manteniendo nombre original exacto
     const result = await cloudinary.uploader.upload(req.file.path, {
-      public_id: `goldstore/products/${req.file.originalname}`,
-      use_filename: true,
-      unique_filename: false,
+      public_id: `${process.env.CLOUDINARY_FOLDER}/${req.file.originalname}`,
+      unique_filename: true,
       overwrite: true,
       resource_type: 'auto'
     });
@@ -159,26 +153,6 @@ exports.updateProduct = async (req, res) => {
     res.json(product);
   } catch (error) {
     res.status(400).json({ message: error.message });
-  }
-};
-
-// Eliminar un producto
-exports.deleteProduct = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: "Producto no encontrado" });
-    }
-    
-    // Eliminar imagen de Cloudinary si existe
-    if (product.cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(product.cloudinaryPublicId);
-    }
-
-    await Stock.findOneAndDelete({ productId: product.productId });
-    res.json({ message: "Producto eliminado" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 };
 
@@ -255,5 +229,44 @@ exports.getProductsWithoutStock = async (req, res) => {
     res.json(productsWithoutStock);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+
+  try {
+    const { productId } = req.params;
+    
+    // Buscar el producto por productId
+    const product = await Product.findOne({ productId });
+    console.log(product.productId)
+    
+    if (!product) {
+      return res.status(404).json({ 
+        success: false,
+        message: "Producto no encontrado" 
+      });
+    }
+
+    // Eliminar imagen de Cloudinary si existe
+       cloudinary.uploader.destroy(product.cloudinaryPublicId);
+        console.log(`Imagen ${product.cloudinaryPublicId} eliminada de Cloudinary`);
+
+    // Eliminar el producto y su stock asociado
+    await Promise.all([
+      Product.findOneAndDelete({ productId }),
+      Stock.findOneAndDelete({ productId })
+    ]);
+
+    res.json({ 
+      success: true,
+      message: "Producto eliminado exitosamente" 
+    });
+  } catch (error) {
+    console.error('Error al eliminar producto:', error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error interno al eliminar el producto" 
+    });
   }
 };

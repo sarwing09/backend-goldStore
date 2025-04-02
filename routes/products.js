@@ -23,6 +23,7 @@ const router = Router();
 router.post('/agregar', upload.single('image'), addProduct);
 router.get('/', getProducts);
 router.get('/:id', getProductById);
+router.delete('/product/:productId', deleteProduct);
 router.put('/:id', upload.single('image'), updateProduct); // Modificado para aceptar imágenes
 router.get('/product-by-id/:productId', getProductByProductId);
 
