@@ -32,7 +32,7 @@ const newProductSchema = new mongoose.Schema({
     type: Number,
     required: [true, "El precio es requerido."],
     min: [0, "El precio debe ser mayor o igual a 0."],
-    max: [1000000, "El precio no puede exceder 1,000,000."],
+    max: [100000000, "El precio no puede exceder de 100,000,000."],
   },
   accesorio: {
     type: String,
