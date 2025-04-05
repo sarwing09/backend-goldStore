@@ -69,7 +69,7 @@ exports.loginUser = async (req, res) => {
         if (!dbUser) {
             return res.status(400).json({
                 ok: false,
-                msg: 'el correo no existe'
+                msg: 'Error en el correo o en la contraseña'
             })
         }
 
@@ -80,7 +80,7 @@ exports.loginUser = async (req, res) => {
 
             return res.status(400).json({
                 ok: false,
-                msg: 'El password no es válido'
+                msg: 'Error en el correo o en la contraseña'
             })
 
         }

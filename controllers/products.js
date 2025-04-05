@@ -260,7 +260,8 @@ exports.deleteProduct = async (req, res) => {
 
     res.json({ 
       success: true,
-      message: "Producto eliminado exitosamente" 
+      message: "Producto eliminado exitosamente" ,
+      deletedImage: true
     });
   } catch (error) {
     console.error('Error al eliminar producto:', error);

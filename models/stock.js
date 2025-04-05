@@ -1,3 +1,4 @@
+// backend/models/stock.js
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
@@ -18,7 +19,7 @@ const stockSchema = new mongoose.Schema({
   movimientos: [{
     tipo: {
       type: String,
-      enum: ['entrada', 'salida'],
+      enum: ['entrada_inicial', 'entrada', 'salida'], // Modificado
       required: [true, 'El tipo de movimiento es requerido.']
     },
     cantidad: {

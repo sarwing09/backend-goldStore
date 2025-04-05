@@ -131,7 +131,7 @@ exports.crearStockInicial = async (req, res) => {
     }
 
     const movimientoInicial = {
-      tipo: 'entrada',
+      tipo: 'entrada_inicial',
       cantidad: cantidad,
       fecha: new Date()
     };

@@ -46,7 +46,7 @@ const newProductSchema = new mongoose.Schema({
     type: String,
     required: [true, "El material es requerido."],
     enum: {
-      values: ["oro de 18 kilates", "oro laminado", "oro de 24 kilates"],
+      values: ["oro de 18 kilates", "oro laminado", "oro de 24 kilates", "acero", "plata", "otros materiales"],
       message: "El material seleccionado no es válido.",
     },
   },
